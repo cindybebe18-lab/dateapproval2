@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Date Approved 💕</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     AUTH SCREEN
+══════════════════════════════════════ -->
+<div id="screen-auth" class="screen active">
+  <div class="auth-hero">
+    <span class="hero-emoji">💕</span>
+    <h1>Date Approved</h1>
+    <p>The cute way to keep your partner in the loop — and earn their trust.</p>
+  </div>
+  <div class="auth-card">
+    <div class="auth-tabs">
+      <button class="auth-tab active" onclick="switchAuthTab('login')">Log In</button>
+      <button class="auth-tab" onclick="switchAuthTab('register')">Sign Up</button>
+    </div>
+
+    <!-- LOGIN -->
+    <div id="auth-login">
+      <div class="form-group">
+        <label class="form-label">Your Name</label>
+        <input id="login-name" class="form-input" type="text" placeholder="e.g. Alex" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Couple Code</label>
+        <input id="login-code" class="form-input" type="text" placeholder="e.g. SUNFLOWER42" style="text-transform:uppercase" />
+      </div>
+      <button class="btn btn-primary" onclick="handleLogin()">Log In 💕</button>
+    </div>
+
+    <!-- REGISTER -->
+    <div id="auth-register" style="display:none">
+      <div class="form-group">
+        <label class="form-label">Your Name</label>
+        <input id="reg-name" class="form-input" type="text" placeholder="e.g. Jordan" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Profile Photo</label>
+        <div class="photo-upload">
+          <div class="photo-preview" id="reg-photo-preview">🧑</div>
+          <label class="photo-upload-btn" for="reg-photo-input">📷 Tap to upload photo</label>
+          <input id="reg-photo-input" type="file" accept="image/*" style="display:none" onchange="handlePhotoUpload(this,'reg-photo-preview')" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Couple Code</label>
+        <input id="reg-code" class="form-input" type="text" placeholder="Create or share a code" style="text-transform:uppercase" />
+        <div style="margin-top:6px;display:flex;gap:8px">
+          <button class="btn btn-secondary btn-sm" onclick="generateCode()" style="flex:1;font-size:13px">✨ Generate</button>
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="handleRegister()">Create Account 🎉</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     MAIN APP (shown after login)
+══════════════════════════════════════ -->
+
+<!-- HOME SCREEN -->
+<div id="screen-home" class="screen">
+  <div class="home-header">
+    <div class="home-greeting" id="home-greeting">Good morning ☀️</div>
+    <div class="home-name" id="home-name">Hey, Alex!</div>
+    <div class="home-date" id="home-date"></div>
+  </div>
+
+  <div style="height:24px"></div>
+
+  <!-- Couple connected banner -->
+  <div id="couple-banner" class="couple-connected" style="display:none">
+    <div class="couple-avatar-sm" id="banner-avatar-a"><span>🧑</span></div>
+    <div>
+      <div class="couple-heart">💕</div>
+      <div class="couple-names" id="banner-names">You & Partner</div>
+    </div>
+    <div class="couple-avatar-sm" id="banner-avatar-b"><span>🧑</span></div>
+  </div>
+
+  <!-- Trust Scores -->
+  <div class="section-title">💖 Trust Scores</div>
+  <div class="trust-row" id="trust-row">
+    <!-- filled by JS -->
+  </div>
+
+  <!-- Pending Approvals -->
+  <div class="section-title" id="pending-section-title" style="display:none">
+    🔔 Needs Your Response <span class="pending-dot"></span>
+  </div>
+  <div class="content-pad" id="pending-list"></div>
+
+  <!-- Today's Outings -->
+  <div class="section-title">📅 Today's Outings</div>
+  <div class="content-pad" id="today-list"></div>
+
+  <!-- Next Upcoming -->
+  <div class="section-title">🗓️ Coming Up Next</div>
+  <div class="content-pad" id="upcoming-list"></div>
+</div>
+
+<!-- REQUEST SCREEN -->
+<div id="screen-request" class="screen">
+  <div class="topbar">
+    <span class="topbar-logo">📝</span>
+    <span class="topbar-title">New Outing Request</span>
+    <span style="width:30px"></span>
+  </div>
+  <div style="padding:20px 16px 0">
+    <div class="form-group">
+      <label class="form-label">📍 Venue Name</label>
+      <input id="req-venue" class="form-input" type="text" placeholder="e.g. The Rooftop Bar" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">🗺️ Location / Address</label>
+      <input id="req-location" class="form-input" type="text" placeholder="e.g. 123 Main St, Downtown" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">🕐 Outing Start Time</label>
+      <input id="req-start" class="form-input" type="datetime-local" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">🏠 Expected Home Time</label>
+      <input id="req-end" class="form-input" type="datetime-local" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">👥 Who Are You Hanging With?</label>
+      <input id="req-with" class="form-input" type="text" placeholder="e.g. Sam, Jamie, and the crew" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">💬 Reason for Outing</label>
+      <textarea id="req-reason" class="form-input" placeholder="Tell your partner what's going on..."></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">📲 Will You Check In?</label>
+      <div class="toggle-group">
+        <button class="toggle-opt active" id="checkin-yes" onclick="setCheckin(true)">Yes, I will! ✅</button>
+        <button class="toggle-opt" id="checkin-no" onclick="setCheckin(false)">Nah 🙅</button>
+      </div>
+      <div class="checkin-interval visible" id="checkin-interval-wrap">
+        <label class="form-label" style="margin-top:10px">⏰ Check-in Every...</label>
+        <select id="req-interval" class="form-input">
+          <option value="1">Every 1 hour</option>
+          <option value="2">Every 2 hours</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn btn-primary" style="margin-bottom:16px" onclick="submitRequest()">Send Request 💌</button>
+  </div>
+</div>
+
+<!-- HISTORY SCREEN -->
+<div id="screen-history" class="screen">
+  <div class="topbar">
+    <span class="topbar-logo">📖</span>
+    <span class="topbar-title">Outing History</span>
+    <span style="width:30px"></span>
+  </div>
+  <div style="height:12px"></div>
+  <div class="history-filter" id="history-filters">
+    <button class="filter-chip active" onclick="filterHistory('all', this)">All</button>
+    <button class="filter-chip" onclick="filterHistory('approved', this)">✅ Approved</button>
+    <button class="filter-chip" onclick="filterHistory('pending', this)">⏳ Pending</button>
+    <button class="filter-chip" onclick="filterHistory('rejected', this)">❌ Rejected</button>
+    <button class="filter-chip" onclick="filterHistory('mine', this)">My Requests</button>
+  </div>
+  <div class="scroll-content" id="history-list"></div>
+</div>
+
+<!-- PROFILE SCREEN -->
+<div id="screen-profile" class="screen">
+  <div class="profile-hero">
+    <div class="profile-avatar" id="profile-avatar">🧑</div>
+    <div class="profile-name" id="profile-name">Your Name</div>
+    <div class="profile-code" id="profile-code">Couple Code: —</div>
+  </div>
+  <div style="height:28px"></div>
+
+  <div class="profile-trust-section">
+    <div class="trust-score-display">
+      <div>
+        <div style="font-size:13px;color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:0.5px">Your Trust Score</div>
+        <div class="trust-score-big" id="profile-score-num">50</div>
+      </div>
+      <div class="trust-label-big" id="profile-score-label">Getting There</div>
+    </div>
+    <div class="big-trust-bar-wrap">
+      <div class="big-trust-bar-fill" id="profile-score-bar" style="width:50%"></div>
+    </div>
+    <div style="font-size:12px;color:var(--text-muted);margin-top:4px">
+      Score updates based on check-ins, punctuality & approved outings
+    </div>
+  </div>
+
+  <div style="padding:20px 20px 0">
+    <div class="card">
+      <div style="font-size:14px;font-weight:700;margin-bottom:12px">📊 Score Breakdown</div>
+      <div class="detail-row">
+        <span class="detail-key">✅ On-time returns</span>
+        <span class="detail-val" id="stat-ontime">0</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-key">📲 Check-ins completed</span>
+        <span class="detail-val" id="stat-checkins">0</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-key">❌ Missed check-ins</span>
+        <span class="detail-val" id="stat-missed">0</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-key">⏰ Late returns</span>
+        <span class="detail-val" id="stat-late">0</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-key">💔 Rejected requests</span>
+        <span class="detail-val" id="stat-rejected">0</span>
+      </div>
+    </div>
+
+    <button class="logout-btn" onclick="handleLogout()">🚪 Log Out</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     BOTTOM NAV
+══════════════════════════════════════ -->
+<nav class="bottom-nav" id="bottom-nav" style="display:none">
+  <button class="nav-item active" onclick="navigate('home')" id="nav-home">
+    <span class="nav-icon">🏠</span>
+    <span class="nav-label">Home</span>
+  </button>
+  <button class="nav-item" onclick="navigate('request')" id="nav-request">
+    <span class="nav-icon">📝</span>
+    <span class="nav-label">Request</span>
+  </button>
+  <button class="nav-item" onclick="navigate('history')" id="nav-history">
+    <span class="nav-icon">📖</span>
+    <span class="nav-label">History</span>
+  </button>
+  <button class="nav-item" onclick="navigate('profile')" id="nav-profile">
+    <span class="nav-icon">👤</span>
+    <span class="nav-label">Profile</span>
+  </button>
+</nav>
+
+<!-- ══════════════════════════════════════
+     MODALS
+══════════════════════════════════════ -->
+
+<!-- Outing Detail Modal -->
+<div class="modal-overlay hidden" id="modal-detail">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="modal-detail-title">Outing Details</div>
+    <div id="modal-detail-body"></div>
+    <div id="modal-detail-actions" style="margin-top:16px"></div>
+    <button class="btn btn-secondary" style="margin-top:10px" onclick="closeModal('modal-detail')">Close</button>
+  </div>
+</div>
+
+<!-- Reject Note Modal -->
+<div class="modal-overlay hidden" id="modal-reject">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Leave a Note 📝</div>
+    <p style="color:var(--text-muted);font-size:14px;margin-bottom:16px;text-align:center">Let your partner know why you're saying no (optional but kind 💕)</p>
+    <div class="form-group">
+      <textarea id="reject-note-input" class="form-input" placeholder="e.g. I'd love to spend that evening together instead..."></textarea>
+    </div>
+    <button class="btn btn-danger" onclick="confirmReject()">Reject Request ❌</button>
+    <button class="btn btn-secondary" style="margin-top:10px" onclick="closeModal('modal-reject')">Cancel</button>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
