@@ -207,12 +207,12 @@ async function initHome() {
 
   const q = query(
     collection(db, 'outings'),
-    where('coupleCode', '==', currentUser.coupleCode),
-    orderBy('createdAt', 'desc')
+    where('coupleCode', '==', currentUser.coupleCode)
   );
 
   unsubOutings = onSnapshot(q, snap => {
-    const outings = snap.docs.map(d => d.data());
+    const outings = snap.docs.map(d => d.data())
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     renderPendingSection(outings);
     renderTodayOutings(outings);
     renderUpcomingOuting(outings);
@@ -537,12 +537,12 @@ function initHistory(filter) {
 
   const q = query(
     collection(db, 'outings'),
-    where('coupleCode', '==', currentUser.coupleCode),
-    orderBy('createdAt', 'desc')
+    where('coupleCode', '==', currentUser.coupleCode)
   );
 
   unsubHistory = onSnapshot(q, snap => {
-    let outings = snap.docs.map(d => d.data());
+    let outings = snap.docs.map(d => d.data())
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     if (filter === 'approved') outings = outings.filter(o => o.status === 'approved');
     if (filter === 'pending')  outings = outings.filter(o => o.status === 'pending');
     if (filter === 'rejected') outings = outings.filter(o => o.status === 'rejected');
