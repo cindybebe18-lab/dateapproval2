@@ -220,8 +220,14 @@ async function initHome() {
     // Also refresh trust scores on any outing change
     fetchPartner().then(partner => renderTrustRow(partner));
   }, err => {
-    console.error('Outings listener error:', err);
-    showToast('Connection issue — check your internet 📶', 'error');
+    console.error('Outings listener error:', err.code, err.message);
+    if (err.code === 'permission-denied') {
+      showToast('Permission denied — fix Firestore rules 🔧', 'error');
+    } else if (err.code === 'failed-precondition') {
+      showToast('Firestore index needed — check console 🔧', 'error');
+    } else {
+      showToast(`Error: ${err.code || err.message}`, 'error');
+    }
   });
 }
 
